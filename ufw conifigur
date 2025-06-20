@@ -1,0 +1,58 @@
+slug: configure-firewall-with-ufw
+title: How to Configure a Firewall with UFW
+description: 'Learn how to use UFW (Uncomplicated Firewall) to manage your firewall on Ubuntu, Debian, or Arch Linux.'
+authors: ["Elle Krout"]
+contributors: ["Elle Krout"]
+published: 2015-11-17
+modified: 2019-08-12
+keywords: ["ufw", "uncomplicated firewall", "ubuntu ufw", "linux ufw", "ufw tutorial", "ubuntu firewall", "iptables", "networking", "firewalls", "filtering", "firewall setup", "ubuntu", "debian", "arch"]
+bundles: ['debian-security', 'network-security']
+license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
+tags: ["networking","security"]
+aliases: ['/security/firewalls/configure-firewall-with-ufw/']
+---
+
+## What is UFW?
+
+UFW, or *uncomplicated firewall*, is a frontend for managing firewall rules in Arch Linux, Debian, or Ubuntu. UFW is used through the command line (although it has GUIs available), and aims to make firewall configuration easy (or, uncomplicated).
+
+{{< note >}}
+If you are running Docker, by default Docker directly manipulates iptables. Any UFW rules that you specify do not apply to Docker containers.
+{{< /note >}}
+
+![How to Configure a Firewall with UFW](ufw_tg.png "How to Configure a Firewall with UFW")
+
+## Before You Begin
+
+1.  Familiarize yourself with our [Getting Started](/docs/products/platform/get-started/) guide and complete the steps for setting your Linode's hostname and timezone.
+
+1.  Ensure that you complete the sections of [Setting Up and Securing a Compute Instance](/docs/products/compute/compute-instances/guides/set-up-and-secure/) guide to create a standard user account, harden SSH access and remove unnecessary network services. When you reach the [Configure a Firewall](/docs/products/compute/compute-instances/guides/set-up-and-secure/#configure-a-firewall) section return to this guide.
+
+    This guide lists the commands for Arch Linux, Debian or Ubuntu distributions only. However, you can use the relevant commands for the outlined tasks on various Linux distributions.
+
+1.  Update your system.
+
+    **Arch Linux**
+
+        sudo pacman -Syu
+
+    **Debian / Ubuntu**
+
+        sudo apt-get update && sudo apt-get upgrade
+
+## Install UFW
+
+Debian starts UFW's systemd unit automatically and enables it to start on reboots, but Arch does not. *This is not the same as telling UFW to enable the firewall rules*. Enabling UFW with systemd or upstart only tells the init system to switch on the UFW daemon.
+
+By default, UFW's rulesets are blank so it is not enforcing any firewall rules--even when the daemon is running. Enforcing your firewall ruleset is covered [further down the page](#enable-the-firewall).
+
+### Arch Linux
+
+1.  Install UFW:
+
+        sudo pacman -S ufw
+
+2.  Start and enable UFW's systemd unit:
+
+        sudo systemctl start ufw
+        sudo systemctl enable ufw
